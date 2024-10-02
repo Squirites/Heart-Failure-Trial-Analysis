@@ -26,8 +26,17 @@ hf_trials$FunderType <- as.factor(hf_trials$FunderType )
 
 # Linear regression is performed with the following variables: Months (dependent), "EndpointNo", "LocationNo", "FunderType", "Age", "StudyREsults" & "Enrollment"
 
-lm_fit_all <- lm(Months ~ Enrollment + FunderType + Phases + EndpointsNo + LocationNo + Age + StudyResults, data = hf_trials)
+lm_fit_all <- lm(Months ~ Enrollment  + FunderType + Phases + EndpointsNo + LocationNo + Age + StudyResults, data = hf_trials)
 summary(lm_fit_all)
+
+# As the enrollment data is skewed, running a scatter plot with Enrollment log transformed shows loose correlation
+# between Months and Enrollment. This is confirmed when a correlation test is run between the two variables.
+# The correlation increases when Enrollment is transformed by raising the variable to 1/n.
+
+hf_trials %>% ggplot(aes (x = log(Enrollment), y = Months, color = Phases)) + geom_point() +
+   ylim(0,100) + xlim(0,10)
+
+cor(hf_trials$Enrollment^(1/2), hf_trials$Months)
 
 # The summary of lm_fit_all shows that the following independent variables are significantly related
 # to the dependent variable 'Months': 'Enrollment', 'FunderType', and 'Phases', with an adj R^2 of 0.17
